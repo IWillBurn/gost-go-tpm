@@ -7,9 +7,9 @@ import (
 	"crypto/sha256"
 	"testing"
 
+	. "github.com/IWillBurn/gost-go-tpm/tpm2"
+	"github.com/IWillBurn/gost-go-tpm/tpm2/transport/simulator"
 	"github.com/google/go-cmp/cmp"
-	. "github.com/google/go-tpm/tpm2"
-	"github.com/google/go-tpm/tpm2/transport/simulator"
 )
 
 func TestCertify(t *testing.T) {

@@ -24,7 +24,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/google/go-tpm/tpmutil"
+	"github.com/IWillBurn/gost-go-tpm/tpmutil"
 )
 
 var (

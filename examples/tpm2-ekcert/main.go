@@ -13,8 +13,8 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/google/go-tpm/legacy/tpm2"
-	"github.com/google/go-tpm/tpmutil"
+	"github.com/IWillBurn/gost-go-tpm/legacy/tpm2"
+	"github.com/IWillBurn/gost-go-tpm/tpmutil"
 )
 
 var (

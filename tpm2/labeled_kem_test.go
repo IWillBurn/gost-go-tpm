@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/google/go-tpm/tpm2/test/testvectors"
+	"github.com/IWillBurn/gost-go-tpm/tpm2/test/testvectors"
 )
 
 func TestECCLabeledEncapsulation(t *testing.T) {

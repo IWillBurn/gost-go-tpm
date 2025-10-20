@@ -6,8 +6,8 @@ import (
 	"errors"
 	"testing"
 
-	. "github.com/google/go-tpm/tpm2"
-	"github.com/google/go-tpm/tpm2/transport/simulator"
+	. "github.com/IWillBurn/gost-go-tpm/tpm2"
+	"github.com/IWillBurn/gost-go-tpm/tpm2/transport/simulator"
 )
 
 func TestNVAuthWrite(t *testing.T) {

@@ -459,7 +459,15 @@ func (a TPMIAlgHash) Hash() (crypto.Hash, error) {
 		return crypto.SHA384, nil
 	case TPMAlgSHA512:
 		return crypto.SHA512, nil
+
+	// [GOST] CHANGES START
+	case TPMAlgGOST3411256:
+		return 21, nil
+	case TPMAlgGOST3411512:
+		return 22, nil
 	}
+	// CHANGES END
+
 	return crypto.SHA256, fmt.Errorf("unsupported hash algorithm: %v", a)
 }
 

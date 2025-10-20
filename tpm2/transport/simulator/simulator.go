@@ -4,9 +4,9 @@ package simulator
 import (
 	"io"
 
+	"github.com/IWillBurn/gost-go-tpm/tpm2/transport"
+	"github.com/IWillBurn/gost-go-tpm/tpmutil"
 	"github.com/google/go-tpm-tools/simulator"
-	"github.com/google/go-tpm/tpm2/transport"
-	"github.com/google/go-tpm/tpmutil"
 )
 
 // TPM represents a connection to a TPM simulator.

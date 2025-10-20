@@ -25,7 +25,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/go-tpm/tpm"
+	"github.com/IWillBurn/gost-go-tpm/tpm"
 )
 
 func generateAction() {

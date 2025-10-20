@@ -23,7 +23,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/google/go-tpm/tpm"
+	"github.com/IWillBurn/gost-go-tpm/tpm"
 )
 
 func extendPcrAction() {

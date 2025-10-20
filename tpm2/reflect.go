@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/go-tpm/tpm2/transport"
+	"github.com/IWillBurn/gost-go-tpm/tpm2/transport"
 )
 
 const (

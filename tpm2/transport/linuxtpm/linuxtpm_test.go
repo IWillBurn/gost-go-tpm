@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/google/go-tpm/tpm2/transport"
-	testhelper "github.com/google/go-tpm/tpm2/transport/test"
+	"github.com/IWillBurn/gost-go-tpm/tpm2/transport"
+	testhelper "github.com/IWillBurn/gost-go-tpm/tpm2/transport/test"
 )
 
 func open(path string) func() (transport.TPMCloser, error) {

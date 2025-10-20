@@ -25,7 +25,7 @@ import (
 	_ "crypto/sha256"
 	_ "crypto/sha512"
 
-	"github.com/google/go-tpm/tpmutil"
+	"github.com/IWillBurn/gost-go-tpm/tpmutil"
 )
 
 var hashInfo = []struct {
@@ -39,6 +39,11 @@ var hashInfo = []struct {
 	{AlgSHA3_256, crypto.SHA3_256},
 	{AlgSHA3_384, crypto.SHA3_384},
 	{AlgSHA3_512, crypto.SHA3_512},
+
+	// [GOST] CHANGES START
+	{AlgGOST3411_256, 21},
+	{AlgGOST3411_512, 22},
+	// CHANGES END
 }
 
 // MAX_DIGEST_BUFFER is the maximum size of []byte request or response fields.
@@ -150,6 +155,14 @@ func (a Algorithm) String() string {
 		_, err = s.WriteString("CFB")
 	case AlgECB:
 		_, err = s.WriteString("ECB")
+
+	// [GOST] CHANGES START
+	case AlgGOST3411_256:
+		_, err = s.WriteString("GOST3411_256")
+	case AlgGOST3411_512:
+		_, err = s.WriteString("GOST3411_512")
+	// CHANGES END
+
 	default:
 		return fmt.Sprintf("Alg?<%d>", int(a))
 	}
@@ -190,6 +203,11 @@ const (
 	AlgCBC       Algorithm = 0x0042
 	AlgCFB       Algorithm = 0x0043
 	AlgECB       Algorithm = 0x0044
+
+	// [GOST] CHANGES START
+	AlgGOST3411_256 Algorithm = 0x0100
+	AlgGOST3411_512 Algorithm = 0x0101
+	// CHANGES END
 )
 
 // HandleType defines a type of handle.

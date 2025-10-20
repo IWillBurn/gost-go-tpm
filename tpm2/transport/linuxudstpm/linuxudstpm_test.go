@@ -8,8 +8,8 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/google/go-tpm/tpm2/transport"
-	testhelper "github.com/google/go-tpm/tpm2/transport/test"
+	"github.com/IWillBurn/gost-go-tpm/tpm2/transport"
+	testhelper "github.com/IWillBurn/gost-go-tpm/tpm2/transport/test"
 )
 
 var tpmSocket = flag.String("tpm_socket", "/dev/tpm0", "path to the TPM simulator UDS")
