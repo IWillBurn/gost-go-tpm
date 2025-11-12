@@ -1376,7 +1376,7 @@ type SymKeyBitsContents interface {
 // create implements the unmarshallableWithHint interface.
 func (u *TPMUSymKeyBits) create(hint int64) (reflect.Value, error) {
 	switch TPMAlgID(hint) {
-	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia:
+	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia, TPMAlgMagma, TPMAlgGrasshopper: // [GOST] Add TPMAlgMagma and TPMAlgGrasshopper
 		var contents boxed[TPMKeyBits]
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
@@ -1396,7 +1396,7 @@ func (u TPMUSymKeyBits) get(hint int64) (reflect.Value, error) {
 		return reflect.ValueOf(nil), fmt.Errorf("incorrect union tag %v, is %v", hint, u.selector)
 	}
 	switch TPMAlgID(hint) {
-	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia:
+	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia, TPMAlgMagma, TPMAlgGrasshopper: // [GOST] Add TPMAlgMagma and TPMAlgGrasshopper
 		var contents boxed[TPMKeyBits]
 		if u.contents != nil {
 			contents = *u.contents.(*boxed[TPMKeyBits])
@@ -1425,7 +1425,7 @@ func NewTPMUSymKeyBits[C SymKeyBitsContents](selector TPMAlgID, contents C) TPMU
 func (u *TPMUSymKeyBits) Sym() (*TPMKeyBits, error) {
 
 	switch u.selector {
-	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia:
+	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia, TPMAlgMagma, TPMAlgGrasshopper: // [GOST] Add TPMAlgMagma and TPMAlgGrasshopper
 		value := u.contents.(*boxed[TPMKeyBits]).unbox()
 		return value, nil
 	default:
@@ -1482,6 +1482,27 @@ func (u *TPMUSymKeyBits) XOR() (*TPMAlgID, error) {
 	return nil, fmt.Errorf("did not contain xor (selector value was %v)", u.selector)
 }
 
+// [GOST] CHANGES START
+// Magma returns the 'magma' member of the union.
+func (u *TPMUSymKeyBits) Magma() (*TPMKeyBits, error) {
+	if u.selector == TPMAlgMagma {
+		value := u.contents.(*boxed[TPMKeyBits]).unbox()
+		return value, nil
+	}
+	return nil, fmt.Errorf("did not contain magma (selector value was %v)", u.selector)
+}
+
+// Grasshopper returns the 'grasshopper' member of the union.
+func (u *TPMUSymKeyBits) Grasshopper() (*TPMKeyBits, error) {
+	if u.selector == TPMAlgGrasshopper {
+		value := u.contents.(*boxed[TPMKeyBits]).unbox()
+		return value, nil
+	}
+	return nil, fmt.Errorf("did not contain grasshopper (selector value was %v)", u.selector)
+}
+
+// CHANGES END
+
 // TPMUSymMode represents a TPMU_SYM_MODE.
 // See definition in Part 2: Structures, section 11.1.4.
 type TPMUSymMode struct {
@@ -1497,7 +1518,7 @@ type SymModeContents interface {
 // create implements the unmarshallableWithHint interface.
 func (u *TPMUSymMode) create(hint int64) (reflect.Value, error) {
 	switch TPMAlgID(hint) {
-	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia:
+	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia, TPMAlgMagma, TPMAlgGrasshopper: // [GOST] Add TPMAlgMagma and TPMAlgGrasshopper
 		var contents boxed[TPMAlgID]
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
@@ -1517,7 +1538,7 @@ func (u TPMUSymMode) get(hint int64) (reflect.Value, error) {
 		return reflect.ValueOf(nil), fmt.Errorf("incorrect union tag %v, is %v", hint, u.selector)
 	}
 	switch TPMAlgID(hint) {
-	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia:
+	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia, TPMAlgMagma, TPMAlgGrasshopper: // [GOST] Add TPMAlgMagma and TPMAlgGrasshopper
 		var contents boxed[TPMAlgID]
 		if u.contents != nil {
 			contents = *u.contents.(*boxed[TPMAlgID])
@@ -1545,7 +1566,7 @@ func NewTPMUSymMode[C SymModeContents](selector TPMAlgID, contents C) TPMUSymMod
 // Sym returns the 'sym' member of the union.
 func (u *TPMUSymMode) Sym() (*TPMIAlgSymMode, error) {
 	switch u.selector {
-	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia:
+	case TPMAlgTDES, TPMAlgAES, TPMAlgSM4, TPMAlgCamellia, TPMAlgMagma, TPMAlgGrasshopper: // [GOST] Add TPMAlgMagma and TPMAlgGrasshopper
 		value := u.contents.(*boxed[TPMIAlgSymMode]).unbox()
 		return value, nil
 	default:
@@ -1592,6 +1613,27 @@ func (u *TPMUSymMode) Camellia() (*TPMIAlgSymMode, error) {
 	}
 	return nil, fmt.Errorf("did not contain camellia (selector value was %v)", u.selector)
 }
+
+// [GOST] CHANGES START
+// Magma returns the 'magma' member of the union.
+func (u *TPMUSymMode) Magma() (*TPMIAlgSymMode, error) {
+	if u.selector == TPMAlgMagma {
+		value := u.contents.(*boxed[TPMIAlgSymMode]).unbox()
+		return value, nil
+	}
+	return nil, fmt.Errorf("did not contain magma (selector value was %v)", u.selector)
+}
+
+// Grasshopper returns the 'grasshopper' member of the union.
+func (u *TPMUSymMode) Grasshopper() (*TPMIAlgSymMode, error) {
+	if u.selector == TPMAlgGrasshopper {
+		value := u.contents.(*boxed[TPMIAlgSymMode]).unbox()
+		return value, nil
+	}
+	return nil, fmt.Errorf("did not contain grasshopper (selector value was %v)", u.selector)
+}
+
+// CHANGES END
 
 // TPMUSymDetails represents a TPMU_SYM_DETAILS.
 // See definition in Part 2: Structures, section 11.1.5.

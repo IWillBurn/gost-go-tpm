@@ -239,6 +239,11 @@ const (
 	AlgAES192
 	AlgAES256
 	AlgXOR
+
+	// [GOST] CHANGES START
+	AlgMagma256
+	AlgGrasshopper256
+	// CHANGES START
 )
 
 // AlgMap Map of Algorithms to Strings for nicer output and comparisons, etc.
@@ -250,6 +255,11 @@ var AlgMap = map[Algorithm]string{
 	AlgMGF1:   "MFG1",
 	AlgAES192: "AES192",
 	AlgAES256: "AES256",
+
+	// [GOST] CHANGES START
+	AlgMagma256:       "Magma256",
+	AlgGrasshopper256: "Grasshopper256",
+	// CHANGES START
 }
 
 func (a Algorithm) String() string {

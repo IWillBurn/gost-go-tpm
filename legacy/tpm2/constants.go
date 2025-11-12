@@ -161,6 +161,10 @@ func (a Algorithm) String() string {
 		_, err = s.WriteString("GOST3411_256")
 	case AlgGOST3411_512:
 		_, err = s.WriteString("GOST3411_512")
+	case AlgMagma:
+		_, err = s.WriteString("Magma")
+	case AlgGrasshopper:
+		_, err = s.WriteString("Grasshopper")
 	// CHANGES END
 
 	default:
@@ -207,6 +211,8 @@ const (
 	// [GOST] CHANGES START
 	AlgGOST3411_256 Algorithm = 0x0100
 	AlgGOST3411_512 Algorithm = 0x0101
+	AlgMagma        Algorithm = 0x0102
+	AlgGrasshopper  Algorithm = 0x0103
 	// CHANGES END
 )
 
