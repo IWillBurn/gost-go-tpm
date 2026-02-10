@@ -614,6 +614,16 @@ func DecodeSignature(in *bytes.Buffer) (*Signature, error) {
 		}
 		sig.ECC.R = big.NewInt(0).SetBytes(r)
 		sig.ECC.S = big.NewInt(0).SetBytes(s)
+		// [GOST] CHANGES START
+	case AlgGOST3410_256, AlgGOST3410_512:
+		sig.ECC = new(SignatureECC)
+		var r, s tpmutil.U16Bytes
+		if err := tpmutil.UnpackBuf(in, &sig.ECC.HashAlg, &r, &s); err != nil {
+			return nil, fmt.Errorf("decoding ECC: %v", err)
+		}
+		sig.ECC.R = big.NewInt(0).SetBytes(r)
+		sig.ECC.S = big.NewInt(0).SetBytes(s)
+		// CHANGES END
 	default:
 		return nil, fmt.Errorf("unsupported signature algorithm 0x%x", sig.Alg)
 	}

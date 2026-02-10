@@ -1951,6 +1951,11 @@ type TPMSSigSchemeRSAPSS TPMSSchemeHash
 // See definition in Part 2: Structures, section 11.2.1.3.
 type TPMSSigSchemeECDSA TPMSSchemeHash
 
+// [GOST] CHANGES START
+type TPMSSigSchemeGOST3410 TPMSSchemeHash
+
+// CHANGES END
+
 // TPMUSigScheme represents a TPMU_SIG_SCHEME.
 // See definition in Part 2: Structures, section 11.2.1.4.
 type TPMUSigScheme struct {
@@ -1972,7 +1977,7 @@ func (u *TPMUSigScheme) create(hint int64) (reflect.Value, error) {
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
 		return reflect.ValueOf(&contents), nil
-	case TPMAlgRSASSA, TPMAlgRSAPSS, TPMAlgECDSA:
+	case TPMAlgRSASSA, TPMAlgRSAPSS, TPMAlgECDSA, TPMAlgGOST3410256, TPMAlgGOST3410512: // [GOST] Add TPMAlgGOST3410256, TPMAlgGOST3410512
 		var contents TPMSSchemeHash
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
@@ -1983,6 +1988,7 @@ func (u *TPMUSigScheme) create(hint int64) (reflect.Value, error) {
 		u.selector = TPMAlgID(hint)
 		return reflect.ValueOf(&contents), nil
 	}
+	// CHANGES END
 	return reflect.ValueOf(nil), fmt.Errorf("no union member for tag %v", hint)
 }
 
@@ -1998,7 +2004,7 @@ func (u TPMUSigScheme) get(hint int64) (reflect.Value, error) {
 			contents = *u.contents.(*TPMSSchemeHMAC)
 		}
 		return reflect.ValueOf(&contents), nil
-	case TPMAlgRSASSA, TPMAlgRSAPSS, TPMAlgECDSA:
+	case TPMAlgRSASSA, TPMAlgRSAPSS, TPMAlgECDSA, TPMAlgGOST3410256, TPMAlgGOST3410512: // [GOST] Add TPMAlgGOST3410256, TPMAlgGOST3410512
 		var contents TPMSSchemeHash
 		if u.contents != nil {
 			contents = *u.contents.(*TPMSSchemeHash)
@@ -2061,6 +2067,25 @@ func (u *TPMUSigScheme) ECDAA() (*TPMSSchemeECDAA, error) {
 	}
 	return nil, fmt.Errorf("did not contain ecdaa (selector value was %v)", u.selector)
 }
+
+// [GOST] CHANGES START
+// GOST3410256 returns the 'gost3410256' member of the union.
+func (u *TPMUSigScheme) GOST3410256() (*TPMSSchemeHash, error) {
+	if u.selector == TPMAlgGOST3410256 {
+		return u.contents.(*TPMSSchemeHash), nil
+	}
+	return nil, fmt.Errorf("did not contain gost3410256 (selector value was %v)", u.selector)
+}
+
+// GOST3410512 returns the 'gost3410512' member of the union.
+func (u *TPMUSigScheme) GOST3410512() (*TPMSSchemeHash, error) {
+	if u.selector == TPMAlgGOST3410512 {
+		return u.contents.(*TPMSSchemeHash), nil
+	}
+	return nil, fmt.Errorf("did not contain gost3410512 (selector value was %v)", u.selector)
+}
+
+// CHANGES END
 
 // TPMTSigScheme represents a TPMT_SIG_SCHEME.
 // See definition in Part 2: Structures, section 11.2.1.5.
@@ -2259,10 +2284,11 @@ type TPMUAsymScheme struct {
 }
 
 // AsymSchemeContents is a type constraint representing the possible contents of TPMUAsymScheme.
+// [GOST] Add TPMSSigSchemeGOST3410
 type AsymSchemeContents interface {
 	Marshallable
 	*TPMSSigSchemeRSASSA | *TPMSEncSchemeRSAES | *TPMSSigSchemeRSAPSS | *TPMSEncSchemeOAEP |
-		*TPMSSigSchemeECDSA | *TPMSKeySchemeECDH | *TPMSKeySchemeECMQV | *TPMSSchemeECDAA
+		*TPMSSigSchemeECDSA | *TPMSKeySchemeECDH | *TPMSKeySchemeECMQV | *TPMSSchemeECDAA | *TPMSSigSchemeGOST3410
 }
 
 // create implements the unmarshallableWithHint interface.
@@ -2308,7 +2334,14 @@ func (u *TPMUAsymScheme) create(hint int64) (reflect.Value, error) {
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
 		return reflect.ValueOf(&contents), nil
+	// [GOST] CHANGES START
+	case TPMAlgGOST3410256, TPMAlgGOST3410512:
+		var contents TPMSSigSchemeGOST3410
+		u.contents = &contents
+		u.selector = TPMAlgID(hint)
+		return reflect.ValueOf(&contents), nil
 	}
+	// CHANGES END
 	return reflect.ValueOf(nil), fmt.Errorf("no union member for tag %v", hint)
 }
 
@@ -2366,6 +2399,16 @@ func (u TPMUAsymScheme) get(hint int64) (reflect.Value, error) {
 			contents = *u.contents.(*TPMSSchemeECDAA)
 		}
 		return reflect.ValueOf(&contents), nil
+
+	// [GOST] CHANGES START
+	case TPMAlgGOST3410256, TPMAlgGOST3410512:
+		var contents TPMSSigSchemeGOST3410
+		if u.contents != nil {
+			contents = *u.contents.(*TPMSSigSchemeGOST3410)
+		}
+		return reflect.ValueOf(&contents), nil
+		// CHANGES END
+
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("no union member for tag %v", hint)
 }
@@ -2433,6 +2476,24 @@ func (u *TPMUAsymScheme) ECDAA() (*TPMSSchemeECDAA, error) {
 	}
 	return nil, fmt.Errorf("did not contain rsassa (selector value was %v)", u.selector)
 }
+
+// [GOST] CHANGES START
+// ECDSA returns the 'gost3410256' member of the union.
+func (u *TPMUAsymScheme) GOST3410256() (*TPMSSigSchemeGOST3410, error) {
+	if u.selector == TPMAlgGOST3410256 {
+		return u.contents.(*TPMSSigSchemeGOST3410), nil
+	}
+	return nil, fmt.Errorf("did not contain gost3410256 (selector value was %v)", u.selector)
+}
+
+func (u *TPMUAsymScheme) GOST3410512() (*TPMSSigSchemeGOST3410, error) {
+	if u.selector == TPMAlgGOST3410512 {
+		return u.contents.(*TPMSSigSchemeGOST3410), nil
+	}
+	return nil, fmt.Errorf("did not contain gost3410512 (selector value was %v)", u.selector)
+}
+
+// CHANGES END
 
 // TPMIAlgRSAScheme represents a TPMI_ALG_RSA_SCHEME.
 // See definition in Part 2: Structures, section 11.2.4.1.
@@ -2556,7 +2617,7 @@ func (u *TPMUSignature) create(hint int64) (reflect.Value, error) {
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
 		return reflect.ValueOf(&contents), nil
-	case TPMAlgECDSA, TPMAlgECDAA:
+	case TPMAlgECDSA, TPMAlgECDAA, TPMAlgGOST3410256, TPMAlgGOST3410512: // [GOST] Add TPMAlgGOST3410256, TPMAlgGOST3410512
 		var contents TPMSSignatureECC
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
@@ -2583,7 +2644,7 @@ func (u TPMUSignature) get(hint int64) (reflect.Value, error) {
 			contents = *u.contents.(*TPMSSignatureRSA)
 		}
 		return reflect.ValueOf(&contents), nil
-	case TPMAlgECDSA, TPMAlgECDAA:
+	case TPMAlgECDSA, TPMAlgECDAA, TPMAlgGOST3410256, TPMAlgGOST3410512: // [GOST] Add TPMAlgGOST3410256, TPMAlgGOST3410512
 		var contents TPMSSignatureECC
 		if u.contents != nil {
 			contents = *u.contents.(*TPMSSignatureECC)
@@ -2640,6 +2701,25 @@ func (u *TPMUSignature) ECDAA() (*TPMSSignatureECC, error) {
 	}
 	return nil, fmt.Errorf("did not contain ecdaa (selector value was %v)", u.selector)
 }
+
+// [GOST] CHANGES START
+// GOST3410256 returns the 'gost3410-256' member of the union.
+func (u *TPMUSignature) GOST3410256() (*TPMSSignatureECC, error) {
+	if u.selector == TPMAlgGOST3410256 {
+		return u.contents.(*TPMSSignatureECC), nil
+	}
+	return nil, fmt.Errorf("did not contain gost3410-256 (selector value was %v)", u.selector)
+}
+
+// GOST3410512 returns the 'gost3410-512' member of the union.
+func (u *TPMUSignature) GOST3410512() (*TPMSSignatureECC, error) {
+	if u.selector == TPMAlgGOST3410512 {
+		return u.contents.(*TPMSSignatureECC), nil
+	}
+	return nil, fmt.Errorf("did not contain gost3410-512 (selector value was %v)", u.selector)
+}
+
+// CHANGES END
 
 // TPMTSignature represents a TPMT_SIGNATURE.
 // See definition in Part 2: Structures, section 11.3.4.

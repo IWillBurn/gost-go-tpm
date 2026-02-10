@@ -165,6 +165,10 @@ func (a Algorithm) String() string {
 		_, err = s.WriteString("Magma")
 	case AlgGrasshopper:
 		_, err = s.WriteString("Grasshopper")
+	case AlgGOST3410_256:
+		_, err = s.WriteString("GOST3410_256")
+	case AlgGOST3410_512:
+		_, err = s.WriteString("GOST3410_512")
 	// CHANGES END
 
 	default:
@@ -213,6 +217,8 @@ const (
 	AlgGOST3411_512 Algorithm = 0x0101
 	AlgMagma        Algorithm = 0x0102
 	AlgGrasshopper  Algorithm = 0x0103
+	AlgGOST3410_256 Algorithm = 0x0104
+	AlgGOST3410_512 Algorithm = 0x0105
 	// CHANGES END
 )
 
@@ -450,8 +456,19 @@ const (
 	CurveNISTP384
 	CurveNISTP521
 
-	CurveBNP256 = EllipticCurve(iota + 10)
-	CurveBNP638
+	// [GOST] CHANGES START
+	// [GOST] TODO: FIX IT
+	CurveTC26Gost3410256ParamSetA
+	CurveTC26Gost3410256ParamSetB
+	CurveTC26Gost3410256ParamSetC
+	CurveTC26Gost3410256ParamSetD
+	CurveTC26Gost3410512ParamSetA
+	CurveTC26Gost3410512ParamSetB
+	CurveTC26Gost3410512ParamSetC
+	// CHANGES END
+
+	CurveBNP256 = EllipticCurve(0x0010)
+	CurveBNP638 = EllipticCurve(0x0011)
 
 	CurveSM2P256 = EllipticCurve(0x0020)
 )
