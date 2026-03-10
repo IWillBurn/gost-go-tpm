@@ -1660,6 +1660,15 @@ func (u *TPMUSymDetails) create(hint int64) (reflect.Value, error) {
 		u.contents = &contents
 		u.selector = TPMAlgID(hint)
 		return reflect.ValueOf(&contents), nil
+
+	// [GOST] CHANGES START
+	case TPMAlgMagma, TPMAlgGrasshopper:
+		var contents boxed[TPMSEmpty]
+		u.contents = &contents
+		u.selector = TPMAlgID(hint)
+		return reflect.ValueOf(&contents), nil
+		// CHANGES END
+
 	}
 	return reflect.ValueOf(nil), fmt.Errorf("no union member for tag %v", hint)
 }
@@ -1670,7 +1679,7 @@ func (u TPMUSymDetails) get(hint int64) (reflect.Value, error) {
 		return reflect.ValueOf(nil), fmt.Errorf("incorrect union tag %v, is %v", hint, u.selector)
 	}
 	switch TPMAlgID(hint) {
-	case TPMAlgAES, TPMAlgXOR:
+	case TPMAlgAES, TPMAlgXOR, TPMAlgMagma, TPMAlgGrasshopper: // [GOST] Add TPMAlgMagma and TPMAlgGrasshopper
 		var contents boxed[TPMSEmpty]
 		if u.contents != nil {
 			contents = *u.contents.(*boxed[TPMSEmpty])
